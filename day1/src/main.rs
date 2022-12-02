@@ -1,3 +1,7 @@
+// Elves carrying lots of snacks
+// Part 1: Find Elf with most snacks
+// Part 2: Find top three Elves with most snacks
+
 use std::fs::File;
 use std::io;
 use std::io::prelude::*;
