@@ -1,14 +1,16 @@
 // Part 1: Each round score is sum of shape used and result of round.
 // Part 2 Figure out required shape so that round ends desired way.
-
 use std::collections::HashMap;
 use std::fs::File;
 use std::io::prelude::*;
 use std::io::{BufReader, Result};
 
+type OutcomeMap = HashMap<&'static str, &'static str>;
+type PointsMap = HashMap<&'static str, i32>;
+
 fn find_outcome_points(
-    outcome_map: &HashMap<&str, &str>,
-    points_map: &HashMap<&str, i32>,
+    outcome_map: &OutcomeMap,
+    points_map: &PointsMap,
     opponent_char: &str,
 ) -> Result<i32> {
     let mut points = 0;
@@ -35,10 +37,10 @@ fn read_all_lines(filename: &str) -> Result<i32> {
 
     let mut total_points = 0;
 
-    let winning_map: HashMap<&str, &str> = HashMap::from([("X", "C"), ("Y", "A"), ("Z", "B")]);
-    let drawing_map: HashMap<&str, &str> = HashMap::from([("X", "A"), ("Y", "B"), ("Z", "C")]);
-    let losing_map: HashMap<&str, &str> = HashMap::from([("X", "B"), ("Y", "C"), ("Z", "A")]);
-    let shape_points_map: HashMap<&str, i32> = HashMap::from([("X", 1), ("Y", 2), ("Z", 3)]);
+    let winning_map: OutcomeMap = HashMap::from([("X", "C"), ("Y", "A"), ("Z", "B")]);
+    let drawing_map: OutcomeMap = HashMap::from([("X", "A"), ("Y", "B"), ("Z", "C")]);
+    let losing_map: OutcomeMap = HashMap::from([("X", "B"), ("Y", "C"), ("Z", "A")]);
+    let shape_points_map: PointsMap = HashMap::from([("X", 1), ("Y", 2), ("Z", 3)]);
 
     for line in reader.lines() {
         let line = line?.clone();
