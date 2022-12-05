@@ -1,41 +1,30 @@
-// Elves carrying lots of snacks
-// Part 1: Find Elf with most snacks
-// Part 2: Find top three Elves with most snacks
-
 use std::fs::File;
-use std::io;
 use std::io::prelude::*;
+use std::io::{BufReader, Result};
 
-fn read_all_lines(filename: &str) -> io::Result<Vec<i32>> {
-    let file = File::open(&filename)?;
-    let reader = io::BufReader::new(file);
+fn main() -> Result<()> {
+    let file = File::open("day1.txt")?;
+    let reader = BufReader::new(file);
 
     let mut totals = Vec::new();
     let mut current_total = 0;
 
     for line in reader.lines() {
-        let line_str = &line?.clone();
+        let line_str = line?.clone();
 
-        if !line_str.is_empty() {
-            let int_line = line_str.trim().parse::<i32>().unwrap();
-            current_total += int_line;
-        } else {
+        if line_str.is_empty() {
             totals.push(current_total);
             current_total = 0;
+        } else {
+            current_total += line_str.parse::<usize>().unwrap();
         }
     }
 
-    // Sort the totals in descending order
     totals.sort_by(|a, b| b.cmp(a));
 
-    Ok(vec![
-        // Return the three highest totals
-        totals.get(0).cloned().unwrap(),
-        totals.get(1).cloned().unwrap(),
-        totals.get(2).cloned().unwrap(),
-    ])
-}
+    let top_three = totals.iter().take(3).sum::<usize>();
 
-fn main() {
-    println!("{:?}", read_all_lines("day1.txt").unwrap());
+    println!("{:?}", top_three);
+
+    Ok(())
 }

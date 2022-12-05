@@ -1,18 +1,16 @@
-// Part 1: Each round score is sum of shape used and result of round.
-// Part 2 Figure out required shape so that round ends desired way.
 use std::collections::HashMap;
 use std::fs::File;
 use std::io::prelude::*;
 use std::io::{BufReader, Result};
 
 type OutcomeMap = HashMap<&'static str, &'static str>;
-type PointsMap = HashMap<&'static str, i32>;
+type PointsMap = HashMap<&'static str, usize>;
 
-fn find_outcome_points(
+fn find_outcome_and_shape_points(
     outcome_map: &OutcomeMap,
     points_map: &PointsMap,
     opponent_char: &str,
-) -> Result<i32> {
+) -> Result<usize> {
     let mut points = 0;
 
     for key in outcome_map.keys() {
@@ -31,8 +29,8 @@ fn find_outcome_points(
     Ok(points)
 }
 
-fn read_all_lines(filename: &str) -> Result<i32> {
-    let file = File::open(filename)?;
+fn main() -> Result<()> {
+    let file = File::open("day2.txt")?;
     let reader = BufReader::new(file);
 
     let mut total_points = 0;
@@ -41,6 +39,7 @@ fn read_all_lines(filename: &str) -> Result<i32> {
     let drawing_map: OutcomeMap = HashMap::from([("X", "A"), ("Y", "B"), ("Z", "C")]);
     let losing_map: OutcomeMap = HashMap::from([("X", "B"), ("Y", "C"), ("Z", "A")]);
     let shape_points_map: PointsMap = HashMap::from([("X", 1), ("Y", 2), ("Z", 3)]);
+    const WIN_DRAW_LOSE: [usize; 3] = [6, 3, 0];
 
     for line in reader.lines() {
         let line = line?.clone();
@@ -52,28 +51,30 @@ fn read_all_lines(filename: &str) -> Result<i32> {
         // Find winning move
         if my_char == 'Z'.to_string() {
             let points =
-                find_outcome_points(&winning_map, &shape_points_map, &opponent_char).unwrap();
+                find_outcome_and_shape_points(&winning_map, &shape_points_map, &opponent_char)
+                    .unwrap();
             total_points += points;
-            total_points += 6;
+            total_points += WIN_DRAW_LOSE[0];
         }
         // Find drawing move
         if my_char == "Y".to_string() {
             let points =
-                find_outcome_points(&drawing_map, &shape_points_map, &opponent_char).unwrap();
+                find_outcome_and_shape_points(&drawing_map, &shape_points_map, &opponent_char)
+                    .unwrap();
             total_points += points;
-            total_points += 3;
+            total_points += WIN_DRAW_LOSE[1];
         }
         // Find losing move
         if my_char == "X".to_string() {
             let points =
-                find_outcome_points(&losing_map, &shape_points_map, &opponent_char).unwrap();
+                find_outcome_and_shape_points(&losing_map, &shape_points_map, &opponent_char)
+                    .unwrap();
             total_points += points;
+            total_points += WIN_DRAW_LOSE[2];
         }
     }
 
-    Ok(total_points)
-}
+    println!("{}", total_points);
 
-fn main() {
-    println!("{:?}", read_all_lines("day2.txt").unwrap());
+    Ok(())
 }
