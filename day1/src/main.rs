@@ -1,30 +1,43 @@
-use std::fs::File;
-use std::io::prelude::*;
-use std::io::{BufReader, Result};
+use std::fs;
+use std::io::Result;
+
+fn part1(input: &str) -> String {
+    let calories = input
+        .split("\n\n")
+        .map(|snack_bag| {
+            snack_bag
+                .lines()
+                .map(|item| item.parse::<u32>().unwrap())
+                .sum::<u32>()
+        })
+        .max()
+        .unwrap();
+
+    return calories.to_string();
+}
+
+fn part2(input: &str) -> String {
+    let mut result = input
+        .split("\n\n")
+        .map(|snack_bag| {
+            snack_bag
+                .lines()
+                .map(|item| item.parse::<usize>().unwrap())
+                .sum::<usize>()
+        })
+        .collect::<Vec<usize>>();
+
+    result.sort_by(|a, b| b.cmp(a));
+
+    let top_three_sum: usize = result.iter().take(3).sum();
+    return top_three_sum.to_string();
+}
 
 fn main() -> Result<()> {
-    let file = File::open("day1.txt")?;
-    let reader = BufReader::new(file);
+    let file = fs::read_to_string("./day1.txt").unwrap();
 
-    let mut totals = Vec::new();
-    let mut current_total = 0;
-
-    for line in reader.lines() {
-        let line_str = line?.clone();
-
-        if line_str.is_empty() {
-            totals.push(current_total);
-            current_total = 0;
-        } else {
-            current_total += line_str.parse::<usize>().unwrap();
-        }
-    }
-
-    totals.sort_by(|a, b| b.cmp(a));
-
-    let top_three = totals.iter().take(3).sum::<usize>();
-
-    println!("{:?}", top_three);
+    println!("{}", part1(&file));
+    println!("{}", part2(&file));
 
     Ok(())
 }
