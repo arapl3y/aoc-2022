@@ -19,7 +19,7 @@ fn main() -> Result<()> {
         .map(|(i, c)| (c, i + 27))
         .collect();
 
-    let mut matching_chars: Vec<char> = vec![];
+    let mut sum: usize = 0;
 
     for line in reader.lines() {
         let line_str = line?.to_string();
@@ -30,25 +30,16 @@ fn main() -> Result<()> {
 
         for c in first_half {
             if second_half.contains(c) {
-                matching_chars.push(c);
+                if c.is_uppercase() {
+                    sum += alphabet_upper_hash[&c];
+                } else {
+                    sum += alphabet_lower_hash[&c];
+                }
             }
         }
     }
 
-    let priority: usize = matching_chars
-        .iter()
-        .map(|char| {
-            if char.is_lowercase() {
-                alphabet_lower_hash[char]
-            } else {
-                alphabet_upper_hash[char]
-            }
-        })
-        .collect::<Vec<usize>>()
-        .iter()
-        .sum();
-
-    println!("{:?}", priority);
+    println!("{:?}", sum);
 
     Ok(())
 }
