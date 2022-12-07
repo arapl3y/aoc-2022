@@ -49,7 +49,7 @@ fn main() -> Result<()> {
         let my_char = letters[1];
 
         // Find winning move
-        if my_char == 'Z'.to_string() {
+        if my_char == "Z" {
             let points =
                 find_outcome_and_shape_points(&winning_map, &shape_points_map, &opponent_char)
                     .unwrap();
@@ -57,7 +57,7 @@ fn main() -> Result<()> {
             total_points += WIN_DRAW_LOSE[0];
         }
         // Find drawing move
-        if my_char == "Y".to_string() {
+        if my_char == "Y" {
             let points =
                 find_outcome_and_shape_points(&drawing_map, &shape_points_map, &opponent_char)
                     .unwrap();
@@ -65,7 +65,7 @@ fn main() -> Result<()> {
             total_points += WIN_DRAW_LOSE[1];
         }
         // Find losing move
-        if my_char == "X".to_string() {
+        if my_char == "X" {
             let points =
                 find_outcome_and_shape_points(&losing_map, &shape_points_map, &opponent_char)
                     .unwrap();
