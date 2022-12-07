@@ -1,4 +1,4 @@
-use std::collections::{HashMap, HashSet};
+use std::collections::HashMap;
 use std::fs::File;
 use std::io::prelude::*;
 use std::io::{BufReader, Result};
@@ -23,19 +23,19 @@ fn main() -> Result<()> {
 
     for line in reader.lines() {
         let line_str = line?.to_string();
-        let mut chars = line_str.chars();
 
-        let first_half: HashSet<char> = chars.by_ref().take(line_str.len() / 2).collect();
-        let second_half: String = chars.collect();
+        let first_half = &line_str[0..line_str.len() / 2];
+        let second_half = &line_str[line_str.len() / 2..];
 
-        for c in first_half {
-            if second_half.contains(c) {
-                if c.is_uppercase() {
-                    sum += alphabet_upper_hash[&c];
-                } else {
-                    sum += alphabet_lower_hash[&c];
-                }
-            }
+        let shared_char = first_half
+            .chars()
+            .find(|c| second_half.contains(*c))
+            .unwrap();
+
+        if shared_char.is_uppercase() {
+            sum += alphabet_upper_hash[&shared_char];
+        } else {
+            sum += alphabet_lower_hash[&shared_char];
         }
     }
 
