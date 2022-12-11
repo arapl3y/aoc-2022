@@ -1,12 +1,8 @@
 use std::collections::HashMap;
-use std::fs::File;
-use std::io::prelude::*;
-use std::io::{BufReader, Result};
+use std::fs;
+use std::io::Result;
 
-fn main() -> Result<()> {
-    let file = File::open("day3.txt")?;
-    let reader = BufReader::new(file);
-
+fn get_shared_char_priority(shared_char: char) -> usize {
     let alphabet_lower_hash: HashMap<char, usize> = "abcdefghijklmnopqrstuvwxyz"
         .chars()
         .enumerate()
@@ -19,27 +15,71 @@ fn main() -> Result<()> {
         .map(|(i, c)| (c, i + 27))
         .collect();
 
-    let mut sum: usize = 0;
-
-    for line in reader.lines() {
-        let line_str = line?.to_string();
-
-        let first_half = &line_str[0..line_str.len() / 2];
-        let second_half = &line_str[line_str.len() / 2..];
-
-        let shared_char = first_half
-            .chars()
-            .find(|c| second_half.contains(*c))
-            .unwrap();
-
-        if shared_char.is_uppercase() {
-            sum += alphabet_upper_hash[&shared_char];
-        } else {
-            sum += alphabet_lower_hash[&shared_char];
-        }
+    if shared_char.is_uppercase() {
+        return alphabet_upper_hash[&shared_char];
+    } else {
+        return alphabet_lower_hash[&shared_char];
     }
+}
 
-    println!("{:?}", sum);
+fn get_shared_char_in_halves(line: &str) -> char {
+    let first_half = &line[0..line.len() / 2];
+    let second_half = &line[line.len() / 2..];
+
+    let shared_char = first_half
+        .chars()
+        .find(|c| second_half.contains(*c))
+        .unwrap();
+
+    return shared_char;
+}
+
+fn get_shared_char_in_chunk(chunk: Vec<&str>) -> char {
+    let shared_char = chunk[0]
+        .chars()
+        .find(|c| chunk[1].contains(*c) && chunk[2].contains(*c))
+        .unwrap();
+
+    return shared_char;
+}
+
+fn part1(input: &str) -> String {
+    let result: usize = input
+        .lines()
+        .map(|line| {
+            let shared_char = get_shared_char_in_halves(line);
+
+            return get_shared_char_priority(shared_char);
+        })
+        .collect::<Vec<usize>>()
+        .iter()
+        .sum();
+
+    return result.to_string();
+}
+
+fn part2(input: &str) -> String {
+    let result: usize = input
+        .lines()
+        .collect::<Vec<_>>()
+        .chunks(3)
+        .map(|chunk| {
+            let shared_char = get_shared_char_in_chunk(chunk.to_vec());
+
+            return get_shared_char_priority(shared_char);
+        })
+        .collect::<Vec<usize>>()
+        .iter()
+        .sum();
+
+    return result.to_string();
+}
+
+fn main() -> Result<()> {
+    let file = fs::read_to_string("./day3.txt").unwrap();
+
+    println!("{}", part1(&file));
+    println!("{}", part2(&file));
 
     Ok(())
 }
